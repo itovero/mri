@@ -26,9 +26,9 @@ classdef LoopClass
         Bz1
         
         %Magnetic Field
-        BX
-        BY
-        BZ
+        %BX
+        %BY
+        %BZ
     end
    methods
         

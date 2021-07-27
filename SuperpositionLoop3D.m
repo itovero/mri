@@ -2,8 +2,8 @@ clc
 close all
 clear all
 
-numRows = 1;
-numCols = 2;
+numRows = 2;
+numCols = 4;
 numLoops = numRows * numCols;
 for k = 1:numLoops
     x(k) = LoopClass;
@@ -38,15 +38,18 @@ fh = figure(1);
 set(fh, 'color', 'white'); 
 grid on
 
+Nx=51;
+Nz=51;  % No. of grids in Z-axis
+Ny=51;  % No. of grids in Y-axis
+u0=1;   % for simplicity, u0 is taken as 1 (permitivity) 
+
+BX(1:Nx,1:Ny,1:Nz)=0; % Initialize sum magnetic field to be zero first
+BY(1:Nx,1:Ny,1:Nz)=0;
+BZ(1:Nx,1:Ny,1:Nz)=0;
+ 
  %Initializing the Magnetic Field for all loops
  for k = 1:numLoops
      disp(k);
-     
-     
-     Nx=51;
-     Nz=51;  % No. of grids in Z-axis
-     Ny=51;  % No. of grids in Y-axis
-     u0=1;   % for simplicity, u0 is taken as 1 (permitivity)
      
      X(1:Nx, 1:Ny,1:Nz)=0;
      Y(1:Nx, 1:Ny,1:Nz)=0; % This array is for 1-d to 2-d conversion of coordinates
@@ -93,14 +96,14 @@ grid on
             x(k).By1=(x(k).I*u0./(4*pi*(x(k).R.^3))).*x(k).Ycross;
             x(k).Bz1=(x(k).I*u0./(4*pi*(x(k).R.^3))).*x(k).Zcross;
             
-            x(k).BX(a,b,c)=0;       % Initialize sum magnetic field to be zero first
-            x(k).BY(a,b,c)=0;
-            x(k).BZ(a,b,c)=0;
+            %BX(a,b,c)=0;       % Initialize sum magnetic field to be zero first
+            %BY(a,b,c)=0;
+            %BZ(a,b,c)=0;
             
             for i=1:N   % loop over all current elements along coil    
-                x(k).BX(a,b,c)=x(k).BX(a,b,c)+x(k).Bx1(i);
-                x(k).BY(a,b,c)=x(k).BY(a,b,c)+x(k).By1(i);
-                x(k).BZ(a,b,c)=x(k).BZ(a,b,c)+x(k).Bz1(i);
+                BX(a,b,c)=BX(a,b,c)+x(k).Bx1(i);
+                BY(a,b,c)=BY(a,b,c)+x(k).By1(i);
+                BZ(a,b,c)=BZ(a,b,c)+x(k).Bz1(i);
             end
             end
         end
@@ -109,9 +112,9 @@ grid on
 %Plotting BZ Component of Magnetic Field
 figure(2)
 for k = 1:numLoops
-    fig2_BZ = squeeze(x(k).BZ(1, :, :));
-    lim1=min(min(x(k).BZ));
-    lim2=max(max(x(k).BZ));
+    fig2_BZ = squeeze(BZ(1, :, :));
+    lim1=min(min(BZ));
+    lim2=max(max(BZ));
     steps=(lim2-lim1)/100;
     %contour(zp,yp,x(k).BZ,lim1:steps:lim2)
     imagesc(zp, yp, fig2_BZ)
@@ -133,9 +136,9 @@ set(fh, 'color', 'white');
 
 figure(3)
 for k = 1:numLoops
-    fig3_BZ = squeeze(x(k).BZ(1, :, :));
-    lim1=min(min(x(k).BY));
-    lim2=max(max(x(k).BY));
+    fig3_BZ = squeeze(BZ(1, :, :));
+    lim1=min(min(BY));
+    lim2=max(max(BY));
     steps=(lim2-lim1)/100;
     %contour(zp,yp,x(k).BY,lim1:steps:lim2)
     imagesc(xp, yp, fig3_BZ)
